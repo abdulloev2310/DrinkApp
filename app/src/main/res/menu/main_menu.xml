@@ -5,8 +5,9 @@
         android:title=""
         android:icon="@drawable/baseline_search_24"
         android:id="@+id/search_view"
-        android:iconTint="@color/white"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="always|collapseActionView"
-        />
+        >
+
+    </item>
 </menu>

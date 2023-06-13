@@ -51,74 +51,9 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        val search = menu?.findItem(R.id.search_view)
-        val searchView = search?.actionView as? SearchView
-        searchView?.isSubmitButtonEnabled = true
-        searchView?.queryHint = "Search..."
-        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(p0: String?): Boolean {
-
-                return true
-
-            }
-
-            override fun onQueryTextChange(p0: String?): Boolean {
-
-                lifecycleScope.launch {
-                    val search = p0?.let {
-                        RetrofitObject.retrofit.create(InterFaceApi::class.java).searchDrink(
-                            it
-                        )
-                    }
-
-                    val a = binding.navView.findViewById<RecyclerView>(R.id.rv)
-//                    a.apply {
-//                        layoutManager = LinearLayoutManager(this@MainActivity)
-//                        adapter = mAdapter.apply {
-//                            search?.drinks?.let { setADapter(it) }
-//
-//                            mAdapter?.setOnClick {
-//
-//                                    lifecycleScope.launch {
-//
-//                                        val set = RetrofitObject.retrofit.create(InterFaceApi::class.java)
-//                                            .getCategories(it.strCategory)
-//                                        mAdapter = AdapterCoctail()
-//                                        binding1.rv.apply {
-//                                            layoutManager  = GridLayoutManager(this@MainActivity, 3)
-//                                            adapter = mAdapter?.apply {
-//                                                setADapter(set.drinks)
-//
-//                                                setOnClick {
-//
-//                                                    val intent = Intent(this@MainActivity, DetailActivity::class.java)
-//                                                    intent.putExtra("Data", it.idDrink)
-//                                                    startActivity(intent)
-//
-//
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
 
 
-                }
 
-                return true
-
-            }
-        })
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    private fun setADapter(list:List<DrinkDto2>){
-        mAdapter?.setData(list)
-    }
 
 
 }

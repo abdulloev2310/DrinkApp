@@ -1,4 +1,4 @@
-package com.example.myapplication111.Room
+package com.example.myapplication111.Room.History
 
 import androidx.room.Dao
 import androidx.room.Insert

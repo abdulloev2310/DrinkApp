@@ -1,4 +1,4 @@
-package com.example.myapplication111.Room
+package com.example.myapplication111.Room.History
 
 import android.content.Context
 import androidx.room.Database
@@ -11,16 +11,16 @@ import com.example.myapplication111.Retrofit.data.DrinkDto2
 )
 abstract class AppDatabase: RoomDatabase() {
 
-    abstract fun getTodoDao():DrinkDao
+    abstract fun getDrinkDao(): DrinkDao
 
     companion object{
 
         @Volatile
-        private var instance:AppDatabase? = null
+        private var instance: AppDatabase? = null
         private val LOCK = Any()
 
-        operator fun invoke(context: Context) = instance?: synchronized(this){
-            instance?:buildDatabase(context).also{
+        operator fun invoke(context: Context) = instance ?: synchronized(this){
+            instance ?: buildDatabase(context).also{
                 instance = it
             }
         }

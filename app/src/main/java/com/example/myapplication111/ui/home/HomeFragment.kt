@@ -4,8 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -16,11 +15,9 @@ import com.example.myapplication111.Retrofit.RetrofitObject
 import com.example.myapplication111.Retrofit.adapter.AdapterCategory
 import com.example.myapplication111.Retrofit.adapter.AdapterCoctail
 import com.example.myapplication111.Retrofit.data.CategoryDto2
-import com.example.myapplication111.Retrofit.data.DrinkDto
 import com.example.myapplication111.Retrofit.data.DrinkDto2
-import com.example.myapplication111.Room.AppDatabase
+import com.example.myapplication111.Room.History.AppDatabase
 import com.example.myapplication111.databinding.FragmentHomeBinding
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -62,7 +59,7 @@ class HomeFragment : Fragment() {
                                  it.strDrink, it.strDrinkThumb, it.idDrink
                              )
 
-                             AppDatabase(requireContext()).getTodoDao().addDrinkToFragment(todo)
+                             AppDatabase(requireContext()).getDrinkDao().addDrinkToFragment(todo)
 
                              val intent = Intent(requireContext(), DetailActivity::class.java)
                              intent.putExtra("Data", it.idDrink)
@@ -95,16 +92,20 @@ class HomeFragment : Fragment() {
 
                                         setOnClick {
 
+
                                             lifecycleScope.launch {
 
                                                 val todo = DrinkDto2(
                                                     it.strDrink, it.strDrinkThumb, it.idDrink
                                                 )
 
-                                                AppDatabase(requireContext()).getTodoDao().addDrinkToFragment(todo)
+                                                AppDatabase(requireContext()).getDrinkDao().addDrinkToFragment(todo)
 
                                                 val intent = Intent(requireContext(), DetailActivity::class.java)
                                                 intent.putExtra("Data", it.idDrink)
+                                                intent.putExtra("Name", it.strDrink)
+                                                intent.putExtra("Thumb", it.strDrinkThumb)
+
                                                 startActivity(intent)
                                             }
 
@@ -127,6 +128,41 @@ class HomeFragment : Fragment() {
 
 
         return root
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setHasOptionsMenu(true)
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+        val search = menu.findItem(R.id.search_view)
+        val searchView = search.actionView as? SearchView
+        searchView?.isSubmitButtonEnabled = true
+        searchView?.queryHint = "Search..."
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+
+                return true
+
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+
+                lifecycleScope.launch {
+                    val query = p0?.let {
+                        RetrofitObject.retrofit.create(InterFaceApi::class.java).searchDrink(
+                            it
+                        )
+                    }
+                    setAdapterDrinks(query!!.drinks)
+                }
+
+                return true
+
+            }
+        })
+
     }
 
     fun setAdapterDrinks(list: List<DrinkDto2>) {
